@@ -70,8 +70,7 @@ function fetchDataFromGithub(){
     url: 'https://api.github.com/events',
     headers: {
       'User-Agent': 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 5 Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.65 Mobile Safari/537.36',
-      // 'Authorization': 'token ' + process.env.GITHUB_OAUTH_KEY
-      'Authorization': 'token ' + "59fa42975fd1ae4194d5d33d130ada45ee5b31e2"
+      'Authorization': 'token ' + process.env.GITHUB_OAUTH_KEY
     }
   };
   request(options, function (error, response, body) {
