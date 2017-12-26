@@ -37,7 +37,7 @@ Note: For production run `export NODE_ENV="production"` before starting the serv
 
 
 #### Todo
-- [] Add Mood Light
-- [] Dockerize
-- [] Deploy
-- [] Clean up / Modularize code
+[ ] Add Mood Light
+[ ] Dockerize
+[ ] Deploy
+[ ] Clean up / Modularize code
