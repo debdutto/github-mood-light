@@ -3,9 +3,6 @@ GitHub Mood Light
 
 Mood Light and Music triggered by github events
 
-Extended from [Github Audio Project](https://github.com/debugger22/github-audio)<br>
-Check it out at [https://github.audio/](https://github.audio/)
-
 Dependencies
 ---------------------
 * node
@@ -41,3 +38,6 @@ Note: For production run `export NODE_ENV="production"` before starting the serv
 - [ ] Dockerize
 - [ ] Deploy
 - [ ] Clean up / Modularize code
+
+This is extended from [Github Audio Project](https://github.com/debugger22/github-audio)<br>
+Check it out at [https://github.audio/](https://github.audio/)
