@@ -39,5 +39,6 @@ Note: For production run `export NODE_ENV="production"` before starting the serv
 - [ ] Deploy
 - [ ] Clean up / Modularize code
 
+---------------------
 This is extended from [Github Audio Project](https://github.com/debugger22/github-audio)<br>
 Check it out at [https://github.audio/](https://github.audio/)
