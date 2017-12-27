@@ -1,0 +1,26 @@
+{
+  "name": "github-mood-light",
+  "scripts": {
+  },
+  "env": {
+    "GITHUB_OAUTH_KEY": {
+      "required": true
+    },
+    "REDIS_URL": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-redis"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
