@@ -38,10 +38,10 @@ socket.on('github', function(data) {
     data.data.forEach(function(event) {
         if (!isEventInQueue(event)) {
             // Filter out events only specified by the user
-            if (orgRepoFilterNames != []) {
+            if (orgRepoFilterNames) {
                 // Don't consider pushes to github.io repos when org filter is on
                 if (new RegExp(orgRepoFilterNames.join("|")).test(event.repo_name) &&
-                    event.repo_name.indexOf('github.io') == -1) {
+                    event.repo_name.indexOf('github.io') === -1) {
                     eventQueue.push(event);
                 }
             } else {
@@ -50,39 +50,33 @@ socket.on('github', function(data) {
         }
     });
     // Don't let the eventQueue grow more than 1000
-    if (eventQueue.length > 1000) eventQueue = eventQueue.slice(0, 100);
+    if (eventQueue.length > 200) eventQueue = eventQueue.slice(0, 100);
 });
 
 socket.on('connect', function() {
-    if (svg != null) {
-        $('svg').css('background-color', svg_background_color_online);
-        $('header').css('background-color', svg_background_color_online);
-        $('.offline-text').css('visibility', 'hidden');
-        $('.events-remaining-text').css('visibility', 'hidden');
-        $('.events-remaining-value').css('visibility', 'hidden');
+    if (svg) {
+        setCSSProperties(false)
     }
 });
 
-socket.on('disconnect', function() {
-    if (svg != null) {
+socket.on('disconnect', setCSSProperties);
+
+socket.on('error', setCSSProperties);
+
+function setCSSProperties(isOfflineVisible) {
+    if(isOfflineVisible !== false) { isOfflineVisible = true }
+    if (svg) {
         $('svg').css('background-color', svg_background_color_offline);
         $('header').css('background-color', svg_background_color_offline);
-        $('.offline-text').css('visibility', 'visible');
-        $('.events-remaining-text').css('visibility', 'visible');
-        $('.events-remaining-value').css('visibility', 'visible');
-
-    }
-});
-
-socket.on('error', function() {
-    if (svg != null) {
-        $('svg').css('background-color', svg_background_color_offline);
-        $('header').css('background-color', svg_background_color_offline);
-        $('.offline-text').css('visibility', 'visible');
+        if(isOfflineVisible) {
+            $('.offline-text').css('visibility', 'visible');
+        } else {
+            $('.offline-text').css('visibility', 'hidden');
+        }
         $('.events-remaining-text').css('visibility', 'visible');
         $('.events-remaining-value').css('visibility', 'visible');
     }
-});
+}
 
 
 /**
@@ -90,7 +84,7 @@ socket.on('error', function() {
  */
 function isEventInQueue(event) {
     for (var i = 0; i < eventQueue.length; i++) {
-        if (eventQueue[i].id == event.id)
+        if (eventQueue[i].id === event.id)
             return true;
     }
     return false;
@@ -149,7 +143,7 @@ $(function() {
     var loaded_sounds = 0;
     var sound_load = function(r) {
         loaded_sounds += 1;
-        if (loaded_sounds == total_sounds) {
+        if (loaded_sounds === total_sounds) {
             all_loaded = true;
             setTimeout(playFromQueueExchange1, Math.floor(Math.random() * 1000));
             // Starting the second exchange makes music a bad experience
@@ -229,9 +223,9 @@ function playSound(size, type) {
     index = Math.max(1, index);
     if (current_notes < note_overlap) {
         current_notes++;
-        if (type == 'IssuesEvent' || type == 'IssueCommentEvent') {
+        if (type === 'IssuesEvent' || type === 'IssueCommentEvent') {
             clav[index].play();
-        } else if (type == 'PushEvent') {
+        } else if (type === 'PushEvent') {
             celesta[index].play();
         } else {
             playRandomSwell();
@@ -247,7 +241,7 @@ function playSound(size, type) {
 
 function playFromQueueExchange1() {
     var event = eventQueue.shift();
-    if (event != null && event.message != null && !shouldEventBeIgnored(event) && svg != null) {
+    if (event && event.message && !shouldEventBeIgnored(event) && svg) {
         playSound(event.message.length * 1.1, event.type);
         if (!document.hidden)
             drawEvent(event, svg);
@@ -258,7 +252,7 @@ function playFromQueueExchange1() {
 
 function playFromQueueExchange2() {
     var event = eventQueue.shift();
-    if (event != null && event.message != null && !shouldEventBeIgnored(event) && svg != null) {
+    if (event && event.message && !shouldEventBeIgnored(event) && svg) {
         playSound(event.message.length, event.type);
         if (!document.hidden)
             drawEvent(event, svg);

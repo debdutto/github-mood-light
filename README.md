@@ -3,6 +3,8 @@ GitHub Mood Light
 
 Mood Light and Music triggered by github events
 
+Check it out at [https://github-mood-light.herokuapp.com](https://github-mood-light.herokuapp.com)
+
 Dependencies
 ---------------------
 * node
@@ -36,7 +38,7 @@ Note: For production run `export NODE_ENV="production"` before starting the serv
 #### Todo
 - [x] Add Mood Light
 - [ ] Dockerize
-- [ ] Deploy
+- [x] Deploy
 - [ ] Clean up / Modularize code
 
 ---------------------

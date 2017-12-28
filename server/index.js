@@ -76,21 +76,15 @@ function fetchDataFromGithub() {
     request(options, function(error, response, body) {
         if (!error && response.statusCode == 200) {
             var data = JSON.parse(body);
-            var stripedData = stripData(data); // Keep only useful keys
+            var strippedData = stripData(data); // Keep only useful keys
             allClients.forEach(function(socket) {
-                if (socket != null && socket.connected == true) {
-                    redis_client.get('connected_users', function(err, count) {
-                        if (!err && count != null) {
-                            socket.volatile.json.emit('github', { data: stripedData, connected_users: count });
-                        } else {
-                            logger.error(err.message);
-                        }
-                    });
-                }
+                publishToClient(socket, strippedData)
             });
 
-        } else {
+        } else if (response) {
             logger.error("GitHub status code: " + response.statusCode);
+        } else {
+            logger.error("Response not defined: " + error);
         }
     })
     setTimeout(fetchDataFromGithub, 2000);
@@ -98,14 +92,26 @@ function fetchDataFromGithub() {
 setTimeout(fetchDataFromGithub, 2000);
 
 
+function publishToClient(socket, strippedData) {
+    if (socket && socket.connected === true) {
+        redis_client.get('connected_users', function(err, count) {
+            if (!err && count) {
+                socket.volatile.json.emit('github', { data: strippedData, connected_users: count });
+            } else {
+                logger.error(err.message);
+            }
+        });
+    }
+}
+
 function stripData(dataArr) {
-    var stripedData = [];
+    var strippedData = [];
     var pushEventCounter = 0;
     dataArr.forEach(function(data) {
         if (data.type === 'PushEvent') {
             if (pushEventCounter > 3) return;
             if (data.payload.size !== 0) {
-                stripedData.push({
+                strippedData.push({
                     'id': data.id,
                     'type': data.type,
                     'user': data.actor.display_login,
@@ -120,7 +126,7 @@ function stripData(dataArr) {
                 pushEventCounter++;
             }
         } else if (data.type === 'IssueCommentEvent') {
-            stripedData.push({
+            strippedData.push({
                 'id': data.id,
                 'type': data.type,
                 'user': data.actor.display_login,
@@ -134,7 +140,7 @@ function stripData(dataArr) {
             });
         } else if (data.type === 'PullRequestEvent') {
             if (data.payload.pull_request.merged) data.payload.action = 'merged';
-            stripedData.push({
+            strippedData.push({
                 'id': data.id,
                 'type': data.type,
                 'user': data.actor.display_login,
@@ -147,7 +153,7 @@ function stripData(dataArr) {
                 'url': data.payload.pull_request.html_url
             });
         } else if (data.type === 'IssuesEvent') {
-            stripedData.push({
+            strippedData.push({
                 'id': data.id,
                 'type': data.type,
                 'user': data.actor.display_login,
@@ -161,5 +167,5 @@ function stripData(dataArr) {
             });
         }
     });
-    return stripedData;
+    return strippedData;
 }
